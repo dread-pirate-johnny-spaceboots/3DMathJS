@@ -1,5 +1,9 @@
 import test from 'ava'
 import { Vector3 } from './Vector'
+import {run} from './TestRunner'
+
+
+// TODO: refactor to use testrunner.run
 
 test('Can scale vector3 by scaler value', t => {
     const tests = [
@@ -142,4 +146,19 @@ test('Can add vector3 to vector3', t => {
             console.error(`Failed to add [${error[0].x}, ${error[0].y}, ${error[0].z}]`)
         }
     }
+})
+
+test('Can compute vector3 dot product', t => {
+    const tests = [
+        [new Vector3(1,2,3), new Vector3(4,5,6), 32]
+    ]
+
+    run(
+        tests,
+        test => {
+            const dot = Vector3.Dot(test[0], test[1])
+            return dot === test[2]
+        },
+        test => `Failed to compute vector3 dot product`
+    ) && t.pass()
 })

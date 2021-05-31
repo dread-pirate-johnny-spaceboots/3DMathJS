@@ -5,6 +5,10 @@ class Vector3 {
         this.z = z
     }
 
+    static Dot(v3a, v3b) {
+        return (v3a.x * v3b.x) + (v3a.y * v3b.y) + (v3a.z * v3b.z)
+    }
+
     scale(scaler) {
         return new Vector3(this.x * scaler, this.y * scaler, this.z * scaler)
     }

@@ -85,3 +85,32 @@ test('Can scale a 3D matrix', t => {
         test => `Failed to scale a 3D matrix`
     ) && t.pass()
 })
+
+test('Can multiply matricies', t => {
+    const tests = [[
+        new Matrix3(1, 2, 1, 2, 1, 2, 1, 2, 1), 
+        new Matrix3(1, 2, 4, 6, 3, 2, 6, -2, .66), 
+        new Matrix3(19, 6, 8.66, 20, 3, 11.32, 19, 6, 8.66)
+    ], /*[
+        // another test case
+ ]*/]
+
+    run(
+        tests,
+        test => {
+            const matrix = test[0].multiply(test[1])
+            return matrix.data[0][0] == test[2].data[0][0] &&
+                   matrix.data[0][1] == test[2].data[0][1] &&
+                   matrix.data[0][2] == test[2].data[0][2] &&
+                   
+                   matrix.data[1][0] == test[2].data[1][0] &&
+                   matrix.data[1][1] == test[2].data[1][1] &&
+                   matrix.data[1][2] == test[2].data[1][2] &&
+
+                   matrix.data[2][0] == test[2].data[2][0] &&
+                   matrix.data[2][1] == test[2].data[2][1] &&
+                   matrix.data[2][2] == test[2].data[2][2]
+        },
+        test => ``
+    ) && t.pass()
+})

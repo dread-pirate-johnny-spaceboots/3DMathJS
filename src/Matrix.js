@@ -43,6 +43,32 @@ class Matrix3 {
             this.data[2][0] * scaler, this.data[2][1] * scaler, this.data[2][2] * scaler
         )
     }
+
+    // written using loops. If you need performance use another library.
+    multiply(matrix3) {
+        if (!(matrix3 instanceof Matrix3)) { throw new Error("Invalid argument type supplied, must be instance of Matrix3") }
+
+        const colA = new Vector3(matrix3.data[0][0], matrix3.data[1][0], matrix3.data[2][0])    
+        const colB = new Vector3(matrix3.data[0][1], matrix3.data[1][1], matrix3.data[2][1])
+        const colC = new Vector3(matrix3.data[0][2], matrix3.data[1][2], matrix3.data[2][2])
+
+        let rowVectors = []
+        for (let rI = 0; rI < this.data.length; rI++) {
+            const row = this.data[rI]
+            const rowVector = new Vector3(row[0], row[1], row[2])
+            rowVectors[rI] = new Vector3(
+                Vector3.Dot(rowVector, colA), 
+                Vector3.Dot(rowVector, colB), 
+                Vector3.Dot(rowVector, colC)
+            )
+        }
+
+        return new Matrix3(
+            rowVectors[0],
+            rowVectors[1],
+            rowVectors[2]
+        )
+    }    
 }
 
 export {
