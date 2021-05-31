@@ -162,3 +162,18 @@ test('Can compute vector3 dot product', t => {
         test => `Failed to compute vector3 dot product`
     ) && t.pass()
 })
+
+test('Can compute vector3 cross product', t => {
+    const tests = [
+        [new Vector3(3, 4, 5), new Vector3(6, 7, 8), new Vector3(-3, 6, -3)]
+    ]
+
+    run(
+        tests,
+        test => {
+            const cross = Vector3.Cross(test[0], test[1])
+            return cross.x === test[2].x && cross.y === test[2].y && cross.z === test[2].z
+        },
+        test => `Failed to compute vector3 cross product`
+    ) && t.pass()
+})

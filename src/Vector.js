@@ -9,6 +9,14 @@ class Vector3 {
         return (v3a.x * v3b.x) + (v3a.y * v3b.y) + (v3a.z * v3b.z)
     }
 
+    static Cross(v3a, v3b) {
+        return new Vector3(
+            v3a.y * v3b.z - v3a.z * v3b.y, 
+            v3a.z * v3b.x - v3a.x * v3b.z,
+            v3a.x * v3b.y - v3a.y * v3b.x
+        )
+    }
+
     scale(scaler) {
         return new Vector3(this.x * scaler, this.y * scaler, this.z * scaler)
     }
