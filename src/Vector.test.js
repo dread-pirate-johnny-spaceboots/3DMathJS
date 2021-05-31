@@ -1,6 +1,7 @@
 import test from 'ava'
 import { Vector3 } from './Vector'
 import {run} from './TestRunner'
+import { Matrix3 } from './Matrix'
 
 
 // TODO: refactor to use testrunner.run
@@ -175,6 +176,30 @@ test('Can compute vector3 cross product', t => {
             return cross.x === test[2].x && cross.y === test[2].y && cross.z === test[2].z
         },
         test => `Failed to compute vector3 cross product`
+    ) && t.pass()
+})
+
+test('Can compute vector3 outer product', t => {
+    const tests = [
+        [new Vector3(1, 2, 3), new Vector3(4,5,6), new Matrix3(4,5,6, 8,10,12, 12,15,18)]
+    ]
+
+    run(
+        tests,
+        test => {
+            const m = Vector3.Outer(test[0], test[1])
+            return m.data[0][0] === test[2].data[0][0] &&
+                   m.data[0][1] === test[2].data[0][1] &&
+                   m.data[0][2] === test[2].data[0][2] &&
+                   
+                   m.data[1][0] === test[2].data[1][0] &&
+                   m.data[1][1] === test[2].data[1][1] &&
+                   m.data[1][2] === test[2].data[1][2] &&
+
+                   m.data[2][0] === test[2].data[2][0] &&
+                   m.data[2][1] === test[2].data[2][1] &&
+                   m.data[2][2] === test[2].data[2][2]
+        }
     ) && t.pass()
 })
 

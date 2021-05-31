@@ -1,3 +1,5 @@
+import { Matrix3 } from "./Matrix"
+
 class Vector3 {
     constructor(x, y, z) {
         this.x = x
@@ -17,9 +19,19 @@ class Vector3 {
         )
     }
 
+    static Outer(v3a, v3b) {
+        return new Matrix3(
+            v3a.x * v3b.x, v3a.x * v3b.y, v3a.x * v3b.z,
+            v3a.y * v3b.x, v3a.y * v3b.y, v3a.y * v3b.z,
+            v3a.z * v3b.x, v3a.z * v3b.y, v3a.z * v3b.z
+        )
+    }
+
     static TripleScaler(v3a, v3b, v3c) {
         return Vector3.Dot(v3c, Vector3.Cross(v3a, v3b))
     }
+
+    
 
     scale(scaler) {
         return new Vector3(this.x * scaler, this.y * scaler, this.z * scaler)
