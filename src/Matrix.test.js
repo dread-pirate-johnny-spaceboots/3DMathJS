@@ -114,3 +114,18 @@ test('Can multiply matricies', t => {
         test => ``
     ) && t.pass()
 })
+
+test('Get determinant of matrix', t => {
+    const tests = [
+        [new Matrix3(12, 22, 23, 4, 5, 6, 7, 8, 9 ), 27],
+        [new Matrix3(1,2,3,4,5,6,7,8,9), 0]
+    ]
+
+    run(
+        tests,
+        test => {
+            return test[0].determinant() === test[1]
+        },
+        test => `Failed to compute determinant of matrix ${text[0]}`
+    ) && t.pass()
+})
