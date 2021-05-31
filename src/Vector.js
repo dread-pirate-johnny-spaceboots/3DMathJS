@@ -2,9 +2,15 @@ import { Matrix3 } from "./Matrix"
 
 class Vector3 {
     constructor(x, y, z) {
-        this.x = x
-        this.y = y
-        this.z = z
+        if (x instanceof Vector3 && y === undefined && z === undefined) {
+            this.x = x.x
+            this.y = x.y
+            this.z = x.z
+        } else {
+            this.x = x
+            this.y = y
+            this.z = z
+        }
     }
 
     static Dot(v3a, v3b) {
@@ -31,7 +37,28 @@ class Vector3 {
         return Vector3.Dot(v3c, Vector3.Cross(v3a, v3b))
     }
 
-    
+    // Gram-Schmidt algo
+    static Orthogonalize(vectors) {
+        const orthogVectors = []
+        
+        for (const v3 of vectors) {
+            let orthogV3 = new Vector3(v3)
+            for(const preOrthogV3 of orthogVectors) {
+                orthogV3 = orthogV3.subtract(preOrthogV3.project(v3))
+            }
+            orthogVectors.push(orthogV3.normalize())
+        }
+
+        return orthogVectors
+    }
+
+    static Equal(v3a, v3b) {
+        return v3a.x === v3b.x && v3a.y === v3b.y && v3a.z === v3b.z
+    }
+
+    equal(v3) {
+        return this.x === v3.x && this.y === v3.y && this.z === v3.z
+    }
 
     scale(scaler) {
         return new Vector3(this.x * scaler, this.y * scaler, this.z * scaler)
@@ -49,12 +76,20 @@ class Vector3 {
         return this.scale(1 / this.size())
     }
 
-    subtract(vector3) {
-        return new Vector3(this.x - vector3.x, this.y - vector3.y, this.z - vector3.z)
+    subtract(v3) {
+        return new Vector3(this.x - v3.x, this.y - v3.y, this.z - v3.z)
     }
 
-    add(vector3) {
-        return new Vector3(this.x + vector3.x, this.y + vector3.y, this.z + vector3.z)
+    add(v3) {
+        return new Vector3(this.x + v3.x, this.y + v3.y, this.z + v3.z)
+    }
+
+    project(v3) {
+        return this.scale(Vector3.Dot(this, v3) / Vector3.Dot(this, this))
+    }
+
+    reject(v3) {
+        return this.subtract( this.project(v3) )
     }
 }
 

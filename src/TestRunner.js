@@ -16,7 +16,7 @@ const run = (tests, perform, formatFailureMessage) => {
         return true
     } else {
         for (const failure of failed) {
-            console.error(formatFailureMessage(test))
+            console.error(formatFailureMessage(failure))
         }
         return false
     }

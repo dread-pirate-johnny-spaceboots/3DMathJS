@@ -215,3 +215,36 @@ test('Can compute vector3 scaler triple product', t => {
         test => `Failed to compute vector3 scaler triple product`
     ) && t.pass()
 })
+
+test('Can project vector3 onto another vector3', t => {
+    const tests = [
+        [new Vector3(1,2,3), new Vector3(4,5,6), new Vector3(16/7, 32/7, 48/7)]
+    ]
+
+    run(
+        tests,
+        test => {
+            const v3 = test[0].project(test[1])
+            return v3.x === test[2].x && v3.y === test[2].y && v3.z === test[2].z 
+        },
+        test => `Failed to project vector ${test[1]} onto ${test[0]}`
+    ) && t.pass()
+})
+
+test('Can orthogonalize an array of vector3s', t => {
+    const tests = [
+        [ 
+            [new Vector3(1, 0, 0), new Vector3(1, 2, 0), new Vector3(0, 2, 2) ], // input
+            [new Vector3(1, 0, 0), new Vector3(0, 1, 0), new Vector3(0, 0, 1) ]  // result
+        ]
+    ]
+
+    run(
+        tests,
+        test => {
+            const vectors = Vector3.Orthogonalize(test[0])
+            return test[1][0].equal(vectors[0]) && test[1][1].equal(vectors[1]) && test[1][2].equal(vectors[2])
+        },
+        test => `Failed to orthoganalize array of vectors`
+    ) && t.pass()
+})
