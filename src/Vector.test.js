@@ -177,3 +177,16 @@ test('Can compute vector3 cross product', t => {
         test => `Failed to compute vector3 cross product`
     ) && t.pass()
 })
+
+test('Can compute vector3 scaler triple product', t => {
+    const tests = [
+        [new Vector3(1, 2, 3), new Vector3(4, 5, 6), new Vector3(7, 8, 9), 0],
+        [new Vector3(11, 2, 31), new Vector3(4, 5, 6), new Vector3(7, 8, 9), -114]
+    ]
+
+    run (
+        tests,
+        test => Vector3.TripleScaler(test[0], test[1], test[2]) === test[3],
+        test => `Failed to compute vector3 scaler triple product`
+    ) && t.pass()
+})

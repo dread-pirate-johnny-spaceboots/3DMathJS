@@ -17,6 +17,10 @@ class Vector3 {
         )
     }
 
+    static TripleScaler(v3a, v3b, v3c) {
+        return Vector3.Dot(v3c, Vector3.Cross(v3a, v3b))
+    }
+
     scale(scaler) {
         return new Vector3(this.x * scaler, this.y * scaler, this.z * scaler)
     }
