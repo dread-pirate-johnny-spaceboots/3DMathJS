@@ -267,3 +267,27 @@ test('Can get the determinant of a 4D matrix', t => {
         }
     ) && t.pass()
 })
+
+test('Can inverse a 4D matrix', t => {
+    const tests = [
+        [new Matrix4(
+            1,1,1,0,
+            0,3,1,2,
+            2,3,1,0,
+            1,0,2,1
+        ), new Matrix4(
+            -3,-.5,1.5,
+            1,1,.25,-.25,
+            -.5,3,.25,-1.25,
+            -.5,-3,0,1,1
+        )]
+    ]
+
+    run(
+        tests,
+        test => {
+            return test[0].invert().equal(test[1])
+        },
+        test => `Failed to invert 4D matrix`
+    ) && t.pass()
+})

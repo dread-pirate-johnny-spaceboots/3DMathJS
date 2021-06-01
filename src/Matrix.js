@@ -223,6 +223,42 @@ class Matrix4 {
 
         return m[0][0] * submA.determinant() - m[0][1] * submB.determinant() + m[0][2] * submC.determinant() - m[0][3] * submD.determinant()
     }
+
+    invert() {
+        const m = this.data
+        const v3a = new Vector3(m[0][0], m[1][0], m[2][0])
+        const v3b = new Vector3(m[0][1], m[1][1], m[2][1])
+        const v3c = new Vector3(m[0][2], m[1][2], m[2][2])
+        const v3d = new Vector3(m[0][3], m[1][3], m[2][3])
+
+        const x = m[3][0]
+        const y = m[3][1]
+        const z = m[3][2]
+        const w = m[3][3]
+
+        let s = Vector3.Cross(v3a, v3b)
+        let t = Vector3.Cross(v3c, v3d)
+        let u = v3a.scale(y).subtract(v3b.scale(x))
+        let v = v3c.scale(w).subtract(v3d.scale(z))
+
+        const invDet  = 1 / (Vector3.Dot(s, v) + Vector3.Dot(t, u))
+        s = s.scale(invDet)
+        t = t.scale(invDet)
+        u = u.scale(invDet)
+        v = v.scale(invDet)
+
+        const r0 = Vector3.Cross(v3b, v).add(t.scale(y))
+        const r1 = Vector3.Cross(v, v3a).subtract(t.scale(x))
+        const r2 = Vector3.Cross(v3d, u).add(s.scale(w))
+        const r3 = Vector3.Cross(u, v3c).subtract(s.scale(z))
+
+        return new Matrix4(
+            r0.x, r0.y, r0.z, -Vector3.Dot(v3b, t),
+            r1.x, r1.y, r1.z,  Vector3.Dot(v3a, t),
+            r2.x, r2.y, r2.z, -Vector3.Dot(v3d, s),
+            r3.x, r3.y, r3.z,  Vector3.Dot(v3c, s),
+        )
+    }
 }
 
 export {
