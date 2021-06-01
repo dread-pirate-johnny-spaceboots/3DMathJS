@@ -1,5 +1,25 @@
 import { Vector3 } from "./Vector";
 
+class Matrix2 {
+    constructor(v0, v1, v2, v3) {
+        this.data = [
+            [v0, v1],
+            [v2, v3]
+        ]
+    }
+
+    add(matrix2) {}
+    subtract(matrix2) {}
+    scale(matrix2) {}
+    multiply(matrix2) {}
+    invert() {}
+
+    determinant() {
+        const m = this.data
+        return m[0][0] * m[1][1] - m[0][1] * m[1][0]
+    }
+}
+
 class Matrix3 {
     /**
      * Construct a 3D matrix from either 3 Vector3s or 9 scaler values
@@ -18,6 +38,12 @@ class Matrix3 {
                 [v6, v7, v8]
             ]
         }
+    }
+
+    equal(m3) {
+        return this.data[0][0] == m3.data[0][0] && this.data[0][1] == m3.data[0][1] && this.data[0][2] == m3.data[0][2] &&
+               this.data[1][0] == m3.data[1][0] && this.data[1][1] == m3.data[1][1] && this.data[2][2] == m3.data[2][2] &&
+               this.data[2][0] == m3.data[2][0] && this.data[2][1] == m3.data[2][1] && this.data[2][2] == m3.data[2][2]
     }
 
     add(matrix3) {
@@ -76,8 +102,30 @@ class Matrix3 {
              - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0])
              + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0])
     }
+
+    invert() {
+        const det = this.determinant()
+        const m = this.data
+        const nM = new Matrix3(
+              1 * (new Matrix2(m[1][1], m[1][2], m[2][1], m[2][2])).determinant(), -1 * (new Matrix2(m[1][0], m[1][2], m[2][0], m[2][2])).determinant(),  1 * (new Matrix2(m[1][0], m[1][1], m[2][0], m[2][1])).determinant(), 
+             -1 * (new Matrix2(m[0][1], m[0][2], m[2][1], m[2][2])).determinant(),  1 * (new Matrix2(m[0][0], m[0][2], m[2][0], m[2][2])).determinant(), -1 * (new Matrix2(m[0][0], m[0][1], m[2][0], m[2][1])).determinant(), 
+              1 * (new Matrix2(m[0][1], m[0][2], m[1][1], m[1][2])).determinant(), -1 * (new Matrix2(m[0][0], m[0][1], m[1][0], m[1][2])).determinant(),  1 * (new Matrix2(m[0][0], m[0][1], m[1][0], m[1][1])).determinant()
+        )
+        let temp = nM.data[1][0]
+        nM.data[1][0] = nM.data[0][1]
+        nM.data[0][1] = temp
+        temp = nM.data[0][2]
+        nM.data[0][2] = nM.data[2][0]
+        nM.data[2][0] = temp
+        temp = nM.data[1][2]
+        nM.data[1][2] = nM.data[2][1]
+        nM.data[2][1] = temp
+
+        return nM.scale(1 / det)
+    }
 }
 
 export {
+    Matrix2,
     Matrix3
 }

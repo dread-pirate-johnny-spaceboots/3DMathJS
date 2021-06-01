@@ -1,7 +1,23 @@
 import test from 'ava'
 import { run } from './TestRunner'
-import { Matrix3 } from './Matrix'
+import { Matrix3, Matrix2 } from './Matrix'
 
+/** Matrix2 Tests --------------------------------------------------------------------------------------------- */
+test('Can get the determinant of a 2D matrix', t => {
+    const tests = [
+        [new Matrix2(1, 5, 6, 0), -30]
+    ]
+
+    run(
+        tests,
+        test => {
+            return test[0].determinant() === test[1]
+        },
+        test => `Failed to get determinant of 2D matrix ${test[0]}`
+    ) && t.pass()
+})
+
+/** Matrix3 Tests --------------------------------------------------------------------------------------------- */
 test('Can add two 3D matricies', t => {
     const tests = [
         [new Matrix3(1, 2, 1, 2, 1, 2, 1, 2, 1), new Matrix3(1, 2, 1, 2, 1, 2, 1, 2, 1), [2,4,2,4,2,4,2,4,2]]
@@ -127,5 +143,35 @@ test('Get determinant of matrix', t => {
             return test[0].determinant() === test[1]
         },
         test => `Failed to compute determinant of matrix ${text[0]}`
+    ) && t.pass()
+})
+
+test('Can invert a 3D matrix', t => {
+    const tests = [
+        [new Matrix3(1, 2, 3, 0, 1, 5, 5, 6, 0), new Matrix3(-6, 18/5, 1.4000000000000001, 5, -3, -1, -1, 4/5, 1/5)]
+    ]
+
+    run(
+        tests,
+        test => {
+            const m = test[0].invert()
+            return m.equal(test[1])
+        },
+        test => `Failed to invert 3D matrix ${JSON.stringify(test[0].data)}`
+    ) && t.pass()
+})
+
+test('Can tell if two matricies are equal', t => {
+    const tests = [
+        [new Matrix3(1, 2, 3, 4, 5, 6, 7, 8, 9), new Matrix3(1, 2, 3, 4, 5, 6, 7, 8, 9), 1],
+        [new Matrix3(1, 2, 3, 4, 5, 6, 7, 8, 9), new Matrix3(-1, -2, -3, -4, -5, -6, -7, -8, -9), 0]
+    ]
+
+    run(
+        tests,
+        test => {
+            return test[0].equal(test[1]) == test[2]
+        },
+        test => `Failed to determine equality of two 3D matricies: ${JSON.stringify(test[0].data)} & ${JSON.stringify(test[1].data)}`
     ) && t.pass()
 })
