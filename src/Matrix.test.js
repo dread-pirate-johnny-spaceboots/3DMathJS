@@ -1,6 +1,6 @@
 import test from 'ava'
 import { run } from './TestRunner'
-import { Matrix3, Matrix2 } from './Matrix'
+import { Matrix3, Matrix2, Matrix4 } from './Matrix'
 
 /** Matrix2 Tests --------------------------------------------------------------------------------------------- */
 test('Can get the determinant of a 2D matrix', t => {
@@ -161,7 +161,7 @@ test('Can invert a 3D matrix', t => {
     ) && t.pass()
 })
 
-test('Can tell if two matricies are equal', t => {
+test('Can tell if two 3D matricies are equal', t => {
     const tests = [
         [new Matrix3(1, 2, 3, 4, 5, 6, 7, 8, 9), new Matrix3(1, 2, 3, 4, 5, 6, 7, 8, 9), 1],
         [new Matrix3(1, 2, 3, 4, 5, 6, 7, 8, 9), new Matrix3(-1, -2, -3, -4, -5, -6, -7, -8, -9), 0]
@@ -173,5 +173,97 @@ test('Can tell if two matricies are equal', t => {
             return test[0].equal(test[1]) == test[2]
         },
         test => `Failed to determine equality of two 3D matricies: ${JSON.stringify(test[0].data)} & ${JSON.stringify(test[1].data)}`
+    ) && t.pass()
+})
+
+/** Matrix4 Tests --------------------------------------------------------------------------------------------- */
+test('Can tell if two 4D matricies are equal', t => {
+    const tests = [
+        [new Matrix4(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16), new Matrix4(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16), 1],
+        [new Matrix4(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16), new Matrix4(-1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0), 0],
+    ]
+
+    run(
+        tests,
+        test => {
+            return test[0].equal(test[1]) == test[2]
+        },
+        test => `Failed to determine equality of two 4D matricies: ${JSON.stringify(test[0].data)} & ${JSON.stringify(test[1].data)}`
+    ) && t.pass()
+})
+
+test('Can add two 4D matricies', t => {
+    const tests = [
+        [new Matrix4(1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2), new Matrix4(1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2), new Matrix4(2,4,2,4,2,4,2,4,2,4,2,4,2,4,2,4,2)],
+        [new Matrix4(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16), new Matrix4(17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32), new Matrix4(18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48)],
+    ]
+
+    run(
+        tests, 
+        test => {
+            const m = test[0].add(test[1])
+            return m.equal(test[2])
+        }, 
+        test => `Failed to add 4D matricies: ${JSON.stringify(test[0].data)} & ${JSON.stringify(test[1].data)}`
+    ) && t.pass()
+})
+
+test('Can subtract two 4D matricies', t => {
+    const tests = [
+        [new Matrix4(1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2), new Matrix4(1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2), new Matrix4(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)],
+        [new Matrix4(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16), new Matrix4(17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32), new Matrix4(-16,-16,-16,-16,-16,-16,-16,-16,-16,-16,-16,-16,-16,-16,-16,-16,-16)],
+    ]
+
+    run(
+        tests, 
+        test => {
+            const m = test[0].subtract(test[1])
+            return m.equal(test[2])
+        }, 
+        test => `Failed to subtract 4D matricies: ${JSON.stringify(test[0].data)} & ${JSON.stringify(test[1].data)}`
+    ) && t.pass()
+})
+
+test('Can scale a 4D matrix', t => {
+    const tests = [
+        [new Matrix4(1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1), 4, new Matrix4(4, 8, 4, 8, 4, 8, 4, 8, 4, 8, 4, 8, 4, 8, 4, 8, 4)]
+    ]
+
+    run(
+        tests, 
+        test => {
+            const m = test[0].scale(test[1])
+            
+            return m.equal(test[2])
+        }, 
+        test => `Failed to scale a 4D matrix: ${JSON.stringify(test[0])} by scaler value ${JSON.stringify[1]}`
+    ) && t.pass()
+})
+
+test('Can multiply 4D matricies', t=> {
+    const tests = [
+        [new Matrix4(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16), new Matrix4(17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32), new Matrix4(250,260,270,280,618,644,670,696,986,1028,1070,1112,1354,1412,1470,1528)],
+    ]
+
+    run(
+        tests,
+        test => {
+            const matrix = test[0].multiply(test[1])
+            return matrix.equal(test[2])
+        },
+        test => `Failed to multiply 4D matricies`
+    ) && t.pass()
+})
+
+test('Can get the determinant of a 4D matrix', t => {
+    const tests = [
+        [new Matrix4(1,3,5,9,1,3,1,7,4,3,9,7,5,2,0,9), -376]
+    ]
+
+    run(
+        tests,
+        test => {
+            return test[0].determinant() === test[1]
+        }
     ) && t.pass()
 })

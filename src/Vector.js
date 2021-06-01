@@ -93,6 +93,27 @@ class Vector3 {
     }
 }
 
+class Vector4 {
+    constructor(x, y, z, w) {
+        if (x instanceof Vector3 && y === undefined && z === undefined && w === undefined) {
+            this.x = x.x
+            this.y = x.y
+            this.z = x.z
+            this.w = x.w
+        } else {
+            this.x = x
+            this.y = y
+            this.z = z
+            this.w = w
+        }
+    }
+
+    static Dot(v4a, v4b) {
+        return (v4a.x * v4b.x) + (v4a.y * v4b.y) + (v4a.z * v4b.z) + (v4a.w * v4b.w)
+    }
+}
+
 export {
-    Vector3
+    Vector3,
+    Vector4
 }

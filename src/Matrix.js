@@ -1,4 +1,4 @@
-import { Vector3 } from "./Vector";
+import { Vector3, Vector4 } from "./Vector";
 
 class Matrix2 {
     constructor(v0, v1, v2, v3) {
@@ -41,9 +41,9 @@ class Matrix3 {
     }
 
     equal(m3) {
-        return this.data[0][0] == m3.data[0][0] && this.data[0][1] == m3.data[0][1] && this.data[0][2] == m3.data[0][2] &&
-               this.data[1][0] == m3.data[1][0] && this.data[1][1] == m3.data[1][1] && this.data[2][2] == m3.data[2][2] &&
-               this.data[2][0] == m3.data[2][0] && this.data[2][1] == m3.data[2][1] && this.data[2][2] == m3.data[2][2]
+        return this.data[0][0] === m3.data[0][0] && this.data[0][1] === m3.data[0][1] && this.data[0][2] === m3.data[0][2] &&
+               this.data[1][0] === m3.data[1][0] && this.data[1][1] === m3.data[1][1] && this.data[1][2] === m3.data[1][2] &&
+               this.data[2][0] === m3.data[2][0] && this.data[2][1] === m3.data[2][1] && this.data[2][2] === m3.data[2][2]
     }
 
     add(matrix3) {
@@ -125,7 +125,108 @@ class Matrix3 {
     }
 }
 
+class Matrix4 {
+    constructor(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15) {
+        if (v0 instanceof Vector4 && v1 instanceof Vector4 && v2 instanceof Vector4 && v3 instanceof Vector4) {
+            this.data = [
+                [v0.x, v0.y, v0.z, v0.w],
+                [v1.x, v1.y, v1.z, v1.w],
+                [v2.x, v2.y, v2.z, v2.w],
+                [v3.x, v3.y, v3.z, v3.w],
+            ]
+        } else if (v0 instanceof Matrix4) {
+            this.data = v0.data
+        } else {
+            this.data = [
+                [v0, v1, v2, v3],
+                [v4, v5, v6, v7],
+                [v8, v9, v10, v11],
+                [v12, v13, v14, v15]
+            ]
+        }
+    }
+
+    equal(m4) {
+        return this.data[0][0] === m4.data[0][0] && this.data[0][1] === m4.data[0][1] && this.data[0][2] === m4.data[0][2] && this.data[0][3] === m4.data[0][3] &&
+               this.data[1][0] === m4.data[1][0] && this.data[1][1] === m4.data[1][1] && this.data[1][2] === m4.data[1][2] && this.data[1][3] === m4.data[1][3] &&
+               this.data[2][0] === m4.data[2][0] && this.data[2][1] === m4.data[2][1] && this.data[2][2] === m4.data[2][2] && this.data[2][3] === m4.data[2][3] &&
+               this.data[3][0] === m4.data[3][0] && this.data[3][1] === m4.data[3][1] && this.data[3][2] === m4.data[3][2] && this.data[3][3] === m4.data[3][3]
+    }
+
+    add(m4) {
+        const c = this.data
+        const n = m4.data
+
+        return new Matrix4(
+            c[0][0] + n[0][0], c[0][1] + n[0][1], c[0][2] + n[0][2], c[0][3] + n[0][3], 
+            c[1][0] + n[1][0], c[1][1] + n[1][1], c[1][2] + n[1][2], c[1][3] + n[1][3],
+            c[2][0] + n[2][0], c[2][1] + n[2][1], c[2][2] + n[2][2], c[2][3] + n[2][3],
+            c[3][0] + n[3][0], c[3][1] + n[3][1], c[3][2] + n[3][2], c[3][3] + n[3][3]
+        )
+    }
+
+    subtract(m4) {
+        const c = this.data
+        const n = m4.data
+
+        return new Matrix4(
+            c[0][0] - n[0][0], c[0][1] - n[0][1], c[0][2] - n[0][2], c[0][3] - n[0][3], 
+            c[1][0] - n[1][0], c[1][1] - n[1][1], c[1][2] - n[1][2], c[1][3] - n[1][3],
+            c[2][0] - n[2][0], c[2][1] - n[2][1], c[2][2] - n[2][2], c[2][3] - n[2][3],
+            c[3][0] - n[3][0], c[3][1] - n[3][1], c[3][2] - n[3][2], c[3][3] - n[3][3]
+        )
+    }
+
+    scale(scaler) {
+        return new Matrix4(
+            this.data[0][0] * scaler, this.data[0][1] * scaler, this.data[0][2] * scaler, this.data[0][3] * scaler,
+            this.data[1][0] * scaler, this.data[1][1] * scaler, this.data[1][2] * scaler, this.data[1][3] * scaler,
+            this.data[2][0] * scaler, this.data[2][1] * scaler, this.data[2][2] * scaler, this.data[2][3] * scaler,
+            this.data[3][0] * scaler, this.data[3][1] * scaler, this.data[3][2] * scaler, this.data[3][3] * scaler
+        )
+    }
+
+    multiply(m4) {
+        if (!(m4 instanceof Matrix4)) { throw new Error("Invalid argument type supplied, must be instance of Matrix4") }
+
+        const colA = new Vector4(m4.data[0][0], m4.data[1][0], m4.data[2][0], m4.data[3][0])    
+        const colB = new Vector4(m4.data[0][1], m4.data[1][1], m4.data[2][1], m4.data[3][1])
+        const colC = new Vector4(m4.data[0][2], m4.data[1][2], m4.data[2][2], m4.data[3][2])
+        const colD = new Vector4(m4.data[0][3], m4.data[1][3], m4.data[2][3], m4.data[3][3])
+
+        let rowVectors = []
+        for (let rI = 0; rI < this.data.length; rI++) {
+            const row = this.data[rI]
+            const rowVector = new Vector4(row[0], row[1], row[2], row[3])
+            rowVectors[rI] = new Vector4(
+                Vector4.Dot(rowVector, colA), 
+                Vector4.Dot(rowVector, colB), 
+                Vector4.Dot(rowVector, colC),
+                Vector4.Dot(rowVector, colD)
+            )
+        }
+
+        return new Matrix4(
+            rowVectors[0],
+            rowVectors[1],
+            rowVectors[2],
+            rowVectors[3],
+        )
+    }
+
+    determinant() {
+        const m = this.data
+        const submA = new Matrix3(m[1][1], m[1][2], m[1][3], m[2][1], m[2][2], m[2][3], m[3][1], m[3][2], m[3][3])
+        const submB = new Matrix3(m[1][0], m[1][2], m[1][3], m[2][0], m[2][2], m[2][3], m[3][0], m[3][2], m[3][3])
+        const submC = new Matrix3(m[1][0], m[1][1], m[1][3], m[2][0], m[2][1], m[2][3], m[3][0], m[3][1], m[3][3])
+        const submD = new Matrix3(m[1][0], m[1][1], m[1][2], m[2][0], m[2][1], m[2][2], m[3][0], m[3][1], m[3][2])
+
+        return m[0][0] * submA.determinant() - m[0][1] * submB.determinant() + m[0][2] * submC.determinant() - m[0][3] * submD.determinant()
+    }
+}
+
 export {
     Matrix2,
-    Matrix3
+    Matrix3,
+    Matrix4
 }

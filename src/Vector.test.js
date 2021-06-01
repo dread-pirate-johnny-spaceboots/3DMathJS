@@ -1,11 +1,13 @@
 import test from 'ava'
-import { Vector3 } from './Vector'
+import { Vector3, Vector4 } from './Vector'
 import {run} from './TestRunner'
 import { Matrix3 } from './Matrix'
 
 
-// TODO: refactor to use testrunner.run
+// TODO: refactor older tests to use testrunner.run
 
+
+/** Vector3 Tests --------------------------------------------------------------------------------------------- */
 test('Can scale vector3 by scaler value', t => {
     const tests = [
         [new Vector3(1,2,3), 3, [3, 6, 9]],
@@ -246,5 +248,23 @@ test('Can orthogonalize an array of vector3s', t => {
             return test[1][0].equal(vectors[0]) && test[1][1].equal(vectors[1]) && test[1][2].equal(vectors[2])
         },
         test => `Failed to orthoganalize array of vectors`
+    ) && t.pass()
+})
+
+//test('Can get the determinant of a ')
+
+/** Vector4 Tests --------------------------------------------------------------------------------------------- */
+test('Can compute the dot product of a 4D vector', t => {
+    const tests = [
+        [new Vector4(1,2,3,4), new Vector4(5,6,7,8), 70]
+    ]
+
+    run(
+        tests,
+        test => {
+            const dot = Vector4.Dot(test[0], test[1])
+            return dot === test[2]
+        },
+        test => `Failed to compute vector3 dot product`
     ) && t.pass()
 })
