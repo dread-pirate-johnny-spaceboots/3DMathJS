@@ -113,7 +113,11 @@ class Vector4 {
     }
 }
 
+
+class Point3 extends Vector3 {}
+
 export {
     Vector3,
-    Vector4
+    Vector4,
+    Point3
 }

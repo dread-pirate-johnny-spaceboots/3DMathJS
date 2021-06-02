@@ -1,6 +1,7 @@
 import test from 'ava'
 import { run } from './TestRunner'
-import { Matrix3, Matrix2, Matrix4 } from './Matrix'
+import { Matrix3, Matrix2, Matrix4, Matrix4Transform } from './Matrix'
+import { Point3, Vector3 } from './Vector'
 
 /** Matrix2 Tests --------------------------------------------------------------------------------------------- */
 test('Can get the determinant of a 2D matrix', t => {
@@ -176,6 +177,149 @@ test('Can tell if two 3D matricies are equal', t => {
     ) && t.pass()
 })
 
+test('Can produce a rotation around the X axis from angle', t => {
+    const tests = [
+        [45, new Matrix3(1, 0, 0, 0, 0.5253219888177297, -0.8509035245341184, 0, 0.8509035245341184, 0.5253219888177297)],
+        [90, new Matrix3(1, 0, 0, 0, -0.4480736161291702, -0.8939966636005579, 0, 0.8939966636005579, -0.4480736161291702)],
+        [12, new Matrix3(1, 0, 0, 0, 0.8438539587324921, 0.5365729180004349, 0, -0.5365729180004349, 0.8438539587324921)],
+        [-66.5, new Matrix3(1, 0, 0, 0, -0.8645438740756395, -0.5025573497604873, 0, 0.5025573497604873, -0.8645438740756395)]
+    ]
+
+    run(
+        tests,
+        test => {
+            const m = Matrix3.RotX(test[0])
+            return m.equal(test[1])
+        },
+        test => `Failed to produce X rotation transform from angle: ${test[0]}`
+    ) && t.pass()
+}) 
+
+test('Can produce a rotation around the Y axis from angle', t => {
+    const tests = [
+        [45, new Matrix3(0.5253219888177297, 0, 0.8509035245341184, 0, 1, 0, -0.8509035245341184, 0, 0.5253219888177297)],
+        [-66.5, new Matrix3(-0.8645438740756395, 0, 0.5025573497604873, 0, 1, 0, -0.5025573497604873, 0, -0.8645438740756395)]
+    ]
+
+    run(
+        tests,
+        test => {
+            const m = Matrix3.RotY(test[0])
+            return m.equal(test[1])
+        },
+        test => `Failed to produce Y rotation transform from angle: ${test[0]}`
+    ) && t.pass()
+})
+
+test('Can produce a rotation around the Z axis from angle', t => {
+    const tests = [
+        [45, new Matrix3(0.5253219888177297, -0.8509035245341184, 0, 0.8509035245341184, 0.5253219888177297, 0, 0, 0, 1)],
+        [0, new Matrix3(1,0,0,0,1,0,0,0,1)]
+    ]
+
+    run(
+        tests,
+        test => {
+            const m = Matrix3.RotZ(test[0])
+            return m.equal(test[1])
+        },
+        test => `Failed to produce Z rotation transform from angle: ${test[0]}`
+    ) && t.pass()
+})
+
+/*
+test('Can produce a rotation around a vector from angle', t => {
+    const tests = [
+        [45, new Vector3(1, 1, 1), new Matrix3()]
+    ]
+
+    run(
+        tests,
+        test => {
+            const m = Matrix3.Rot(test[0], test[1])
+            console.log(m)
+            return m.equal(test[2])
+        },
+        test => `Failed to produce rotation around vector ${test[1]} from angle ${test[0]}`
+    )
+})
+*/
+
+test('Can produce reflection through the plane perpendicular to a given vector', t => {
+    const tests = [
+        [new Vector3(1,1,1), new Matrix3(-1,-2,-2,-2,-1,-2,-2,-2,-1)]
+    ]
+
+    run(
+        tests,
+        test => {
+            const m = Matrix3.Reflection(test[0])
+            return m.equal(test[1])
+        },
+        test => `Failed to produce reflection matrix from vector: ${JSON.stringify(test[0])}`
+    ) && t.pass()
+})
+
+test('Can produce involution through a given vector', t => {
+    const tests = [
+        [new Vector3(1,1,1), new Matrix3(1,2,2,2,1,2,2,2,1)]
+    ]
+
+    run(
+        tests,
+        test => {
+            const m = Matrix3.Involution(test[0])
+            return m.equal(test[1])
+        },
+        test => `Failed to produce involution: ${JSON.stringify(test[0])}`
+    ) && t.pass()
+})
+
+test('Can produce scale transform from component values', t => {
+    const tests = [
+        [1, 2, 3, new Matrix3(1, 0, 0, 0, 2, 0, 0, 0, 3)]
+    ]
+
+    run(
+        tests,
+        test => {
+            const m = Matrix3.Scale(test[0],test[1],test[2])
+            return m.equal(test[3])
+        },
+        test => `Failed to produce scale transform from component values: ${test[0]},${test[1]},${test[2]}`
+    ) && t.pass()
+})
+
+test('Can produce scale transform along vector by scaler', t => {
+    const tests = [
+        [2, new Vector3(1,1,1), new Matrix3(2, 1, 1, 1, 2, 1, 1, 1, 2)]
+    ]
+
+    run(
+        tests,
+        test => {
+            const m = Matrix3.Scale(test[0], test[1])
+            return m.equal(test[2])
+        },
+        test => `Failed to produce scale transform from vector & scale: ${test[0]},${JSON.stringify(test[1])}}`
+    ) && t.pass()
+})
+
+test('Can produce skew transform by angle along length of vector projection', t => {
+    const tests = [
+        [45, new Vector3(1,1,1), new Vector3(-1,-1,-1), new Matrix3(-0.6197751905438615, -1.6197751905438615, -1.6197751905438615, -1.6197751905438615, -0.6197751905438615, -1.6197751905438615, -1.6197751905438615, -1.6197751905438615, -0.6197751905438615)]
+    ]
+
+    run(
+        tests,
+        test => {
+            const m = Matrix3.Skew(test[0], test[1], test[2])
+            return m.equal(test[3])
+        },
+        test => `Failed to produce skew transform from vector projection:`
+    ) && t.pass()
+})
+
 /** Matrix4 Tests --------------------------------------------------------------------------------------------- */
 test('Can tell if two 4D matricies are equal', t => {
     const tests = [
@@ -242,7 +386,17 @@ test('Can scale a 4D matrix', t => {
 
 test('Can multiply 4D matricies', t=> {
     const tests = [
-        [new Matrix4(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16), new Matrix4(17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32), new Matrix4(250,260,270,280,618,644,670,696,986,1028,1070,1112,1354,1412,1470,1528)],
+        [new Matrix4(
+            1, 2, 3, 4, 
+            5, 6, 7, 8, 
+            9, 10, 11, 12, 
+            13, 14, 15, 16
+        ), new Matrix4(
+            17, 18, 19, 20, 
+            21, 22, 23, 24, 
+            25, 26, 27, 28, 
+            29, 30, 31, 32
+        ), new Matrix4(250,260,270,280,618,644,670,696,986,1028,1070,1112,1354,1412,1470,1528)],
     ]
 
     run(
@@ -289,5 +443,118 @@ test('Can inverse a 4D matrix', t => {
             return test[0].invert().equal(test[1])
         },
         test => `Failed to invert 4D matrix`
+    ) && t.pass()
+})
+
+/** Matrix4Transform Tests --------------------------------------------------------------------------------------------- */
+test('Can get translation from transformation matrix', t => {
+    const tests = [
+        [
+            new Matrix4Transform(
+                0, 0, 0, //x
+                0, 0, 0, //y
+                0, 0, 0, //z
+                1, 2, 3  //t
+            ),
+            new Vector3(1,2,3)
+        ],
+        [
+            new Matrix4Transform(
+                new Vector3(0, 0, 0), //x
+                new Vector3(0, 0, 0), //y
+                new Vector3(0, 0, 0), //z
+                new Point3(1, 2, 3)   //t
+            ),
+            new Vector3(1,2,3)
+        ]
+    ]
+
+    run(
+        tests,
+        test => {
+            return test[0].getTranslation().equal(test[1])
+        },
+        test => `Failed to get translation from matrix`
+    ) && t.pass()
+})
+
+test('Can set translation for transformation matrix', t => {
+    const tests = [
+        [
+            new Matrix4Transform(
+                0, 0, 0, //x
+                0, 0, 0, //y
+                0, 0, 0, //z
+                0, 0, 0  //t
+            ),
+            new Point3(1,2,3)
+        ],
+    ]
+
+    run(
+        tests,
+        test => {
+            return test[0].setTranslation(test[1]).getTranslation().equal(test[1])
+        },
+        test => `Failed to set translation for matrix`
+    ) && t.pass()
+})
+
+test('Can invert transformation matrix', t => {
+    const tests = [
+        [
+            new Matrix4Transform(
+                1, 0, 2, //x
+                1, 3, 3, //y
+                1, 1, 1, //z
+                0, 2, 0  //t
+            ),
+            new Matrix4Transform(
+                0, -.5, .5, 1,
+                -.5, .25, .25, -.5,
+                1.5, .25, -.75, -.5,
+                0, 0, 0, 1
+            )
+        ]
+    ]
+
+    run(
+        tests,
+        test => {
+           // console.log(test[0].invert())
+            return test[0].invert().equal(test[1])
+        },
+        test => `Failed to invert 4D matrix`
+    ) && t.pass()
+})
+
+test('Can multiply transformation matrix', t => {
+    const tests = [
+        [
+            new Matrix4Transform(
+                1, 5, 9,
+                2, 6, 10,
+                3, 7, 11,
+                4, 8, 12,
+            ), new Matrix4Transform(
+                17, 21, 25,
+                18, 22, 26,
+                19, 23, 27,
+                20, 24, 28
+            ), new Matrix4Transform(
+                134, 386, 638,
+                140, 404, 668, 
+                146, 422, 698,
+                156, 448, 740
+            )],
+    ]
+
+    run(
+        tests,
+        test => {
+            const matrix = test[0].multiply(test[1])
+            return matrix.equal(test[2])
+        },
+        test => `Failed to multiply 4D transformation matricies`
     ) && t.pass()
 })

@@ -1,4 +1,4 @@
-import { Vector3, Vector4 } from "./Vector";
+import { Point3, Vector3, Vector4 } from "./Vector";
 
 class Matrix2 {
     constructor(v0, v1, v2, v3) {
@@ -8,10 +8,22 @@ class Matrix2 {
         ]
     }
 
-    add(matrix2) {}
-    subtract(matrix2) {}
-    scale(matrix2) {}
-    multiply(matrix2) {}
+    add(m2) {
+        return new Matrix2(this.data[0][0] + m2.data[0][0], this.data[0][1] + m2.data[0][1], this.data[1][0] + m2.data[1][0], this.data[1][1] + m2.data[1][1])
+    }
+
+    subtract(m2) {
+        return new Matrix2(this.data[0][0] - m2.data[0][0], this.data[0][1] - m2.data[0][1], this.data[1][0] - m2.data[1][0], this.data[1][1] - m2.data[1][1])
+    }
+
+    scale(scaler) {
+        return new Matrix2(this.data[0][0] * scaler, this.data[0][1] * scaler, this.data[1][0] * scaler, this.data[1][1] * scaler)
+    }
+
+    multiply(m2) {
+       
+    }
+
     invert() {}
 
     determinant() {
@@ -38,6 +50,129 @@ class Matrix3 {
                 [v6, v7, v8]
             ]
         }
+    }
+
+    static RotX(angle) {
+        const cos = Math.cos(angle)
+        const sin = Math.sin(angle)
+
+        return new Matrix3(
+            1, 0, 0,
+            0, cos, -sin,
+            0, sin, cos
+        )
+    }
+
+    static RotY(angle) {
+        const cos = Math.cos(angle)
+        const sin = Math.sin(angle)
+
+        return new Matrix3(
+            cos, 0, sin,
+            0, 1, 0,
+            -sin, 0, cos
+        )
+    }
+
+    static RotZ(angle) {
+        const cos = Math.cos(angle)
+        const sin = Math.sin(angle)
+
+        return new Matrix3(
+            cos, -sin, 0,
+            sin, cos, 0,
+            0, 0, 1
+        )
+    }
+
+    static Rot(angle, v3) {
+        const cos = Math.cos(angle)
+        const sin = Math.sin(angle)
+        const d = 1 - cos
+        
+        const x = v3.x * d
+        const y = v3.y * d
+        const z = v3.z * d
+        const xy = x * v3.y
+        const xz = x * v3.z
+        const yz = y * v3.z
+
+        return new Matrix3(
+            cos + x * v3.x,  xy - sin * v3.z, xz + sin * v3.y,
+            xy + sin * v3.z, cos + y * v3.y,  yz - sin * v3.x,
+            xz - sin * v3.y, yz + sin * v3.x,   cos + z * v3.z
+        )
+    }
+
+    static Reflection(v3) {
+        const x = v3.x * -2
+        const y = v3.y * -2
+        const z = v3.z * -2
+        const xy = x * v3.y
+        const xz = x * v3.z
+        const yz = y * v3.z
+        
+        return new Matrix3(
+            x * v3.x + 1, xy, xz, 
+            xy, y * v3.y + 1, yz,
+            xz, yz, z * v3.z + 1
+        )
+    }
+
+    static Involution(v3) {
+        const x = v3.x * 2
+        const y = v3.y * 2
+        const z = v3.z * 2
+        const xy = x * v3.y
+        const xz = x * v3.z
+        const yz = y * v3.z
+
+        return new Matrix3(
+            x * v3.x - 1, xy, xz,
+            xy, y * v3.y - 1, yz,
+            xz, yz, z * v3.z - 1.0
+        )
+    }
+
+    static Scale(x, y, z) {
+        if (y instanceof Vector3 && z === undefined) {
+            // Produce scale along vector y by scaler x
+            const s  = x - 1
+            const v3 = y
+            const vX = v3.x * s
+            const vY = v3.y * s
+            const vZ = v3.z * s
+            const xy = vX * v3.y
+            const xz = vX * v3.z
+            const yz = vY * v3.z
+            
+            return new Matrix3(
+                vX * v3.x + 1, xy, xz,
+                xy, vY * v3.y + 1, yz,
+                xz, yz, vZ * v3.z + 1
+            )
+        } else {
+            // Produce orthogonal scale of x,y,z
+            return new Matrix3(
+                x, 0, 0,
+                0, y, 0,
+                0, 0, z
+            )
+        }
+    }
+
+    static Skew(angle, v3Dir, v3Proj) {
+        const t = Math.tan(angle)
+        const x = v3Dir.x * t
+        const y = v3Dir.y * t
+        const z = v3Dir.z * t
+        const p = v3Proj
+
+        return new Matrix3(
+            x * p.x + 1, x * p.y, x * p.z,
+            y * p.x, y * p.y + 1, y * p.z,
+            z * p.x, z * p.y, z * p.z + 1
+        )
     }
 
     equal(m3) {
@@ -123,6 +258,8 @@ class Matrix3 {
 
         return nM.scale(1 / det)
     }
+
+
 }
 
 class Matrix4 {
@@ -261,8 +398,110 @@ class Matrix4 {
     }
 }
 
+// Simplified 4D matrix with pre-baked transformation-based assumptions
+class Matrix4Transform extends Matrix4 {
+    constructor(v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11) {
+        super()
+
+        if (v0 instanceof Vector3 && v1 instanceof Vector3 && v2 instanceof Vector3 && v3 instanceof Point3) {
+            this.data = [
+                [v0.x, v1.x, v2.x, v3.x],
+                [v0.y, v1.y, v2.y, v3.y],
+                [v0.z, v1.z, v2.z, v3.z],
+                [0, 0, 0, 1]
+            ]
+        } else {
+            this.data = [
+                [v0, v3, v6, v9],
+                [v1, v4, v7, v10],
+                [v2, v5, v8, v11],
+                [0, 0, 0, 1]
+            ]
+        }
+    }
+
+    getTranslation() {
+        return new Point3(this.data[0][3], this.data[1][3], this.data[2][3])
+    }
+
+    setTranslation(p3) {
+        this.data[0][3] = p3.x
+        this.data[1][3] = p3.y
+        this.data[2][3] = p3.z
+
+        return this
+    }
+
+    invert() {
+        const v3a = new Vector3(this.data[0][0], this.data[1][0], this.data[2][0])
+        const v3b = new Vector3(this.data[0][1], this.data[1][1], this.data[2][1])
+        const v3c = new Vector3(this.data[0][2], this.data[1][2], this.data[2][2])
+        const v3d = new Vector3(this.data[0][3], this.data[1][3], this.data[2][3])
+
+        let s = Vector3.Cross(v3a, v3b)
+        let t = Vector3.Cross(v3c, v3d)
+
+        const invDet = 1 / Vector3.Dot(s, v3c)
+
+        s = s.scale(invDet)
+        t = t.scale(invDet)
+
+        const c = v3c.scale(invDet)
+        const r0 = Vector3.Cross(v3b, c)
+        const r1 = Vector3.Cross(c, v3a)
+
+        return new Matrix4Transform(
+            r0.x, r0.y, r0.z, -Vector3.Dot(v3b, t),
+            r1.x, r1.y, r1.z,  Vector3.Dot(v3a, t),
+            s.x, s.y, s.z,    -Vector3.Dot(v3d, s)
+        )
+    }
+
+    /*
+    multiply(m4t) {
+        if (m4t instanceof Matrix4Transform) {
+            const a = this.data
+            const b = m4t.data
+            return new Matrix4Transform(
+                a[0][0] * b[0][0] + a[1][0] * b[0][1] + a[2][0] * b[0][2],
+                a[0][0] * b[1][0] + a[1][0] * b[1][1] + a[2][0] * b[1][2],
+                a[0][0] * b[2][0] + a[1][0] * b[2][1] + a[2][0] * b[2][2],
+                a[0][0] * b[3][0] + a[1][0] * b[3][1] + a[2][0] * b[3][2] + a[3][0],
+                a[0][1] * b[0][0] + a[1][1] * b[0][1] + a[2][1] * b[0][2],
+                a[0][1] * b[1][0] + a[1][1] * b[1][1] + a[2][1] * b[1][2],
+                a[0][1] * b[2][0] + a[1][1] * b[2][1] + a[2][1] * b[2][2],
+                a[0][1] * b[3][0] + a[1][1] * b[3][1] + a[2][1] * b[3][2] + a[3][1],
+                a[0][2] * b[0][0] + a[1][2] * b[0][1] + a[2][2] * b[0][2],
+                a[0][2] * b[1][0] + a[1][2] * b[1][1] + a[2][2] * b[1][2],
+                a[0][2] * b[2][0] + a[1][2] * b[2][1] + a[2][2] * b[2][2],
+                a[0][2] * b[3][0] + a[1][2] * b[3][1] + a[2][2] * b[3][2] + a[3][2]
+            )
+        } else if (m4t instanceof Vector3) {
+            const v = m4t
+            const m = this.data
+
+            return new Vector3(
+                m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z,
+                m[0][1] * v.x + m[1][1] * v.y + m[2][1] * v.z,
+                m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z
+            )
+        } else if (m4t instanceof Point3) {
+            const p = m4t
+            const m = this.data
+
+            return new Point3(
+                m[0][0] * p.x + m[1][0] * p.y + m[2][0] * p.z + m[3][0],
+                m[0][1] * p.x + m[1][1] * p.y + m[2][1] * p.z + m[3][1],
+                m[0][2] * p.x + m[1][2] * p.y + m[2][2] * p.z + m[3][2]
+            )
+        }
+    }
+    */
+}
+
 export {
     Matrix2,
     Matrix3,
-    Matrix4
+    Matrix4,
+    Matrix4Transform
 }
