@@ -111,6 +111,18 @@ class Vector4 {
     static Dot(v4a, v4b) {
         return (v4a.x * v4b.x) + (v4a.y * v4b.y) + (v4a.z * v4b.z) + (v4a.w * v4b.w)
     }
+
+    scale(scaler) {
+        return new Vector4(this.x * scaler, this.y * scaler, this.z * scaler, this.w * scaler)
+    }
+
+    size() {
+        return Math.sqrt(this.x*this.x + this.y*this.y + this.z*this.z + this.w*this.w)
+    }
+
+    normalize() {
+        return this.scale(1 / this.size())
+    }
 }
 
 
