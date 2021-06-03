@@ -1,6 +1,8 @@
 import test from "ava"
+import { Matrix3 } from "./Matrix"
 import { Quaternion } from './Quaternion'
 import { run } from './TestRunner'
+import { Vector3 } from "./Vector"
 
 test('Can multiply quaternions', t => {
     const tests = [
@@ -101,3 +103,46 @@ test('Can get the versor of a quaternion', t => {
     ) && t.pass()
 })
 
+test('Can get sandwich product for a given vector3', t => {
+    const tests = [
+        [new Quaternion(0,1,0,1), new Vector3(-1,1,1), new Vector3(2,2,2)],
+        [new Quaternion(2,32,7/8,1), new Vector3(8,11,1.6), new Vector3(-6661.375, 12343.778124999999, -1465.9750000000004)],
+    ]
+
+    run(
+        tests,
+        test => {
+            return test[0].sandwich(test[1]).equal(test[2])
+        },
+        test => `Failed to calculate quaternion sandwich product for vector`
+    ) && t.pass()
+})
+
+test('Get get rotation matrix from a quaternion', t => {
+    const tests = [
+        [new Quaternion(0,1,0,1), new Matrix3(0,0,1,0,1,0,-1,0,0)],
+        [new Quaternion(2,32,7/8,1), new Matrix3(-0.9902890524239436,0.12260071314771262,0.065548896138381,0.12599954479933237,0.9907442530915712,0.05049692739549351,-0.05875123283514149, 0.05826568545633867,-0.9965708216372051)],
+    ]
+
+    run(
+        tests,
+        test => {
+            return test[0].toRotationMatrix().equal(test[1])
+        },
+        test => `Failed to convert quaternion to rotation matrix`
+    ) && t.pass()
+})
+
+test('Can create quaternion from rotation matrix', t => {
+    const tests = [
+        [new Matrix3(0,0,1,0,1,0,-1,0,0), new Quaternion(0,-0.7071067811865475,0,0.7071067811865475)]
+    ]
+
+    run(
+        tests,
+        test => {
+            return Quaternion.FromRotationMatrix(test[0]).equal(test[1])
+        },
+        test => `Failed to create quaternion from rotation matrix`
+    ) && t.pass()
+})
