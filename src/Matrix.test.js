@@ -18,6 +18,20 @@ test('Can get the determinant of a 2D matrix', t => {
     ) && t.pass()
 })
 
+test('Can multiply 2D matricies', t => {
+    const tests = [
+        [new Matrix2(11, 3, 7, 11), new Matrix2(2, 1, 0, 1), new Matrix2(22, 14, 14, 18)]
+    ]
+
+    run(
+        tests,
+        test => {
+            return test[0].multiply(test[1]).equal(test[2])
+        },
+        test => `Failed to multiply 2d maticies ${JSON.stringify(test[0])} & ${JSON.stringify(test[1])}`
+    ) && t.pass()
+})
+
 /** Matrix3 Tests --------------------------------------------------------------------------------------------- */
 test('Can add two 3D matricies', t => {
     const tests = [
@@ -557,4 +571,19 @@ test('Can multiply transformation matrix', t => {
         },
         test => `Failed to multiply 4D transformation matricies`
     ) && t.pass()
+})
+
+test('Can transform a normal vector', t => {
+    const tests = [
+        [new Matrix3(), new Vector3(), new Vector3()]
+    ]
+
+    run(
+        tests,
+        test => {
+            console.log(test[0].transformNormal(test[1]))
+            return test[0].transformNormal(test[1]).equal(test[2])
+        },
+        test => `Failed to transform normal vector`
+    )
 })

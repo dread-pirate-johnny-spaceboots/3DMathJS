@@ -126,7 +126,32 @@ class Vector4 {
 }
 
 
-class Point3 extends Vector3 {}
+class Point3 extends Vector3 {
+    
+    static DistanceOfLineFromLine(p3a, v3a, p3b, v3b) {
+        const dp = p3b.subtract(p3a)
+        const daa = Vector3.Dot(v3a, v3a)
+        const dbb = Vector3.Dot(v3b, v3b)
+        const dab = Vector3.Dot(v3a, v3b)
+        
+        let det = dab * dab - daa * dbb
+        if (Math.abs(det) > Number.MIN_VALUE) {
+            det = 1 / det
+            const dpVa = Vector3.Dot(dp, v3a)
+            const dpVb = Vector3.Dot(dp, v3b)
+            const t1 = (dab * dpVb - dbb * dpVa) * det
+            const t2 = (daa * dpVb - dab * dpVa) * det
+
+            return (dp.add(v3b).scale(t2).subtract(v3a.scale(t1))).size()
+        }
+    }
+
+    distanceFromLine(p3, v3) {
+        const v = Vector3.Cross(this.subtract(p3), v3)
+        return Math.sqrt(Vector3.Dot(v, v) / Vector3.Dot(v3, v3))
+    }
+
+}
 
 export {
     Vector3,

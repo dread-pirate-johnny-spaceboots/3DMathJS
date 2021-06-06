@@ -1,5 +1,5 @@
 import test from 'ava'
-import { Vector3, Vector4 } from './Vector'
+import { Vector3, Vector4, Point3 } from './Vector'
 import {run} from './TestRunner'
 import { Matrix3 } from './Matrix'
 
@@ -266,5 +266,21 @@ test('Can compute the dot product of a 4D vector', t => {
             return dot === test[2]
         },
         test => `Failed to compute vector3 dot product`
+    ) && t.pass()
+})
+
+/** Point3 Tests --------------------------------------------------------------------------------------------- */
+test('Can get distance of point from line', t => {
+    const tests = [
+        [new Point3(4,2,1), new Point3(8, 4, 2), new Vector3(2, 2, 2), 0]
+    ]
+
+    run(
+        tests,
+        test => {
+            console.log(test[0].distanceFromLine(test[1], test[2]))
+            return test[0].distanceFromLine(test[1], test[2]) === test[3]
+        },
+        test => `Failed to calculate distance of point from line`
     ) && t.pass()
 })

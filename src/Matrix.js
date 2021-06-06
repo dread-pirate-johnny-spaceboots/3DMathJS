@@ -8,6 +8,12 @@ class Matrix2 {
         ]
     }
 
+    equal(m2) {
+        const m1 = this.data
+        m2 = m2.data
+        return m1[0][0] === m2[0][0] && m1[0][1] === m2[0][1] && m1[1][0] === m2[1][0] && m1[1][1] === m2[1][1] 
+    }
+
     add(m2) {
         return new Matrix2(this.data[0][0] + m2.data[0][0], this.data[0][1] + m2.data[0][1], this.data[1][0] + m2.data[1][0], this.data[1][1] + m2.data[1][1])
     }
@@ -21,7 +27,13 @@ class Matrix2 {
     }
 
     multiply(m2) {
+        const m1 = this.data
+       m2 = m2.data
        
+        return new Matrix2(
+            (m1[0][0] * m2[0][0]) + (m1[0][1] * m2[1][0]), (m1[0][0] * m2[0][1]) + (m1[0][1] * m2[1][1]),
+            (m1[1][0] * m2[0][0]) + (m1[1][1] * m2[1][0]), (m1[1][0] * m2[0][1]) + (m1[1][1] * m2[1][1])
+        )
     }
 
     invert() {}
@@ -454,6 +466,16 @@ class Matrix4Transform extends Matrix4 {
             r0.x, r0.y, r0.z, -Vector3.Dot(v3b, t),
             r1.x, r1.y, r1.z,  Vector3.Dot(v3a, t),
             s.x, s.y, s.z,    -Vector3.Dot(v3d, s)
+        )
+    }
+
+    transformNormal(v3) {
+        const m = this.data
+
+        return new Vector3(
+            v3.x * m[0][0] + v3.y * m[0][1] + v3.z * m[0][2],
+            v3.x * m[1][0] + v3.y * m[1][1] + v3.z * m[1][2],
+            v3.x * m[2][0] + v3.y * m[2][1] + v3.z * m[2][2]
         )
     }
 
