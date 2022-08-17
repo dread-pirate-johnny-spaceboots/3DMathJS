@@ -27,8 +27,16 @@ class Matrix2 {
     }
 
     multiply(m2) {
+        if (m2 instanceof Vector3) {
+            return new Vector3(
+                m2.x * this.data[0][0] + m2.y * this.data[0][1],
+                m2.x * this.data[1][0] + m2.y * this.data[1][1],
+                1
+            )
+        }
+
         const m1 = this.data
-       m2 = m2.data
+        m2 = m2.data
        
         return new Matrix2(
             (m1[0][0] * m2[0][0]) + (m1[0][1] * m2[1][0]), (m1[0][0] * m2[0][1]) + (m1[0][1] * m2[1][1]),
