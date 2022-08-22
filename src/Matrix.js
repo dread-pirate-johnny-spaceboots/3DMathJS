@@ -316,12 +316,12 @@ class Matrix4 {
         const sin = Math.sin(angle)
         const cos = Math.cos(angle)
         
-        rotation.matrix[0]  = 1;
-        rotation.matrix[15] = 1;
-        rotation.matrix[5]  = cos;
-        rotation.matrix[10] = cos;
-        rotation.matrix[9]  = -sin;
-        rotation.matrix[6]  = sin;
+        rotation.data[0]  = 1;
+        rotation.data[15] = 1;
+        rotation.data[5]  = cos;
+        rotation.data[10] = cos;
+        rotation.data[9]  = -sin;
+        rotation.data[6]  = sin;
         
         return rotation;
     }
@@ -331,12 +331,12 @@ class Matrix4 {
         const sin = Math.sin(angle)
         const cos = Math.cos(angle)
 
-        rotation.matrix[5]  = 1;
-        rotation.matrix[15] = 1;
-        rotation.matrix[0]  = cos;
-        rotation.matrix[2]  = -sin;
-        rotation.matrix[8]  = sin;
-        rotation.matrix[10] = cos;
+        rotation.data[5]  = 1;
+        rotation.data[15] = 1;
+        rotation.data[0]  = cos;
+        rotation.data[2]  = -sin;
+        rotation.data[8]  = sin;
+        rotation.data[10] = cos;
 
         return rotation;
     }
@@ -346,12 +346,12 @@ class Matrix4 {
         const sin = Math.sin(angle)
         const cos = Math.cos(angle)
 
-        rotation.matrix[10] = 1;
-        rotation.matrix[15] = 1;
-        rotation.matrix[0]  = cos;
-        rotation.matrix[1]  = sin;
-        rotation.matrix[4]  = -sin;
-        rotation.matrix[5]  = cos;
+        rotation.data[10] = 1;
+        rotation.data[15] = 1;
+        rotation.data[0]  = cos;
+        rotation.data[1]  = sin;
+        rotation.data[4]  = -sin;
+        rotation.data[5]  = cos;
 
         return rotation;
     }
@@ -363,19 +363,19 @@ class Matrix4 {
         axis.normalize()
 
         const rotation = Matrix4.Zero()
-        rotation.matrix[0]  = (axis.x * axis.x) * cos1 + cos
-        rotation.matrix[1]  = (axis.x * axis.y) * cos1 - (axis.z * sin)
-        rotation.matrix[2]  = (axis.x * axis.z) * cos1 + (axis.y * sin)
-        rotation.matrix[3]  = 0.0
-        rotation.matrix[4]  = (axis.y * axis.x) * cos1 + (axis.z * sin)
-        rotation.matrix[5]  = (axis.y * axis.y) * cos1 + cos
-        rotation.matrix[6]  = (axis.y * axis.z) * cos1 - (axis.x * sin)
-        rotation.matrix[7]  = 0.0
-        rotation.matrix[8]  = (axis.z * axis.x) * cos1 - (axis.y * sin)
-        rotation.matrix[9]  = (axis.z * axis.y) * cos1 + (axis.x * sin)
-        rotation.matrix[10] = (axis.z * axis.z) * cos1 + cos
-        rotation.matrix[11] = 0.0
-        rotation.matrix[15] = 1.0
+        rotation.data[0]  = (axis.x * axis.x) * cos1 + cos
+        rotation.data[1]  = (axis.x * axis.y) * cos1 - (axis.z * sin)
+        rotation.data[2]  = (axis.x * axis.z) * cos1 + (axis.y * sin)
+        rotation.data[3]  = 0.0
+        rotation.data[4]  = (axis.y * axis.x) * cos1 + (axis.z * sin)
+        rotation.data[5]  = (axis.y * axis.y) * cos1 + cos
+        rotation.data[6]  = (axis.y * axis.z) * cos1 - (axis.x * sin)
+        rotation.data[7]  = 0.0
+        rotation.data[8]  = (axis.z * axis.x) * cos1 - (axis.y * sin)
+        rotation.data[9]  = (axis.z * axis.y) * cos1 + (axis.x * sin)
+        rotation.data[10] = (axis.z * axis.z) * cos1 + cos
+        rotation.data[11] = 0.0
+        rotation.data[15] = 1.0
 
         return rotation
     }
@@ -390,19 +390,19 @@ class Matrix4 {
 
     static Scaler(x, y, z) {
         const scaler = Matrix4.Zero()
-        scaler.matrix[0] = x
-        scaler.matrix[5] = y
-        scaler.matrix[10] = z
-        scaler.matrix[15] = 1
+        scaler.data[0] = x
+        scaler.data[5] = y
+        scaler.data[10] = z
+        scaler.data[15] = 1
 
         return scaler
     }
 
     static Translation(x, y, z) {
         const translation = Matrix4.Identity()
-        translation.matrix[12] = x
-        translation.matrix[13] = y
-        translation.matrix[14] = z
+        translation.data[12] = x
+        translation.data[13] = y
+        translation.data[14] = z
 
         return translation
     }
@@ -426,15 +426,15 @@ class Matrix4 {
 
     static PerspectiveLH(width, height, zNear, zFar) {
         const m = Matrix4.Zero()
-        m.matrix[0]  = (2 * zNear) /  width
-        m.matrix[1]  = m.matrix[2] = m.matrix[3] = 0.0
-        m.matrix[5]  = (2.0 * zNear) / height
-        m.matrix[4]  = m.matrix[6] = m.matrix[7] = 0.0
-        m.matrix[10] = -zFar / (zNear - zFar)
-        m.matrix[8]  = m.matrix[9] = 0.0
-        m.matrix[11] = 1.0
-        m.matrix[12] = m.matrix[13] = m.matrix[15] = 0.0
-        m.matrix[14] = (zNear * zFar) / (zNear - zFar)
+        m.data[0]  = (2 * zNear) /  width
+        m.data[1]  = m.data[2] = m.data[3] = 0.0
+        m.data[5]  = (2.0 * zNear) / height
+        m.data[4]  = m.data[6] = m.data[7] = 0.0
+        m.data[10] = -zFar / (zNear - zFar)
+        m.data[8]  = m.data[9] = 0.0
+        m.data[11] = 1.0
+        m.data[12] = m.data[13] = m.data[15] = 0.0
+        m.data[14] = (zNear * zFar) / (zNear - zFar)
 
         return m
     }
@@ -442,37 +442,37 @@ class Matrix4 {
     static PerspectiveForLH(fov, aspect, zNear, zFar) {
         const m = Matrix4.Zero()
         const tan = 1 / (Math.tan(fov * .5))
-        m.matrix[0]  = tan / aspect
-        m.matrix[1]  = m.matrix[2] = m.matrix[3] = 0.0
-        m.matrix[5]  = tan
-        m.matrix[4]  = m.matrix[6] = m.matrix[7] = 0.0
-        m.matrix[8]  = m.matrix[9] = 0.0
-        m.matrix[10] = -zFar / (zNear - zFar)
-        m.matrix[11] = 1.0
-        m.matrix[12] = m.matrix[13] = m.matrix[15] = 0.0
-        m.matrix[14] = (zNear * zFar) / (zNear - zFar)
+        m.data[0]  = tan / aspect
+        m.data[1]  = m.data[2] = m.data[3] = 0.0
+        m.data[5]  = tan
+        m.data[4]  = m.data[6] = m.data[7] = 0.0
+        m.data[8]  = m.data[9] = 0.0
+        m.data[10] = -zFar / (zNear - zFar)
+        m.data[11] = 1.0
+        m.data[12] = m.data[13] = m.data[15] = 0.0
+        m.data[14] = (zNear * zFar) / (zNear - zFar)
 
         return m
     }
 
     static Transpose(matrix) {
         const m = new Matrix4()
-        m.matrix[0] = matrix.matrix[0]
-        m.matrix[1] = matrix.matrix[4]
-        m.matrix[2] = matrix.matrix[8]
-        m.matrix[3] = matrix.matrix[12]
-        m.matrix[4] = matrix.matrix[1]
-        m.matrix[5] = matrix.matrix[5]
-        m.matrix[6] = matrix.matrix[9]
-        m.matrix[7] = matrix.matrix[13]
-        m.matrix[8] = matrix.matrix[2]
-        m.matrix[9] = matrix.matrix[6]
-        m.matrix[10] = matrix.matrix[10]
-        m.matrix[11] = matrix.matrix[14]
-        m.matrix[12] = matrix.matrix[3]
-        m.matrix[13] = matrix.matrix[7]
-        m.matrix[14] = matrix.matrix[11]
-        m.matrix[15] = matrix.matrix[15]
+        m.data[0] = matrix.data[0]
+        m.data[1] = matrix.data[4]
+        m.data[2] = matrix.data[8]
+        m.data[3] = matrix.data[12]
+        m.data[4] = matrix.data[1]
+        m.data[5] = matrix.data[5]
+        m.data[6] = matrix.data[9]
+        m.data[7] = matrix.data[13]
+        m.data[8] = matrix.data[2]
+        m.data[9] = matrix.data[6]
+        m.data[10] = matrix.data[10]
+        m.data[11] = matrix.data[14]
+        m.data[12] = matrix.data[3]
+        m.data[13] = matrix.data[7]
+        m.data[14] = matrix.data[11]
+        m.data[15] = matrix.data[15]
 
         return m
     }
