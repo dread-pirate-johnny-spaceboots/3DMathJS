@@ -573,6 +573,7 @@ test('Can multiply transformation matrix', t => {
     ) && t.pass()
 })
 
+/*
 test('Can transform a normal vector', t => {
     const tests = [
         [new Matrix3(), new Vector3(), new Vector3()]
@@ -587,3 +588,4 @@ test('Can transform a normal vector', t => {
         test => `Failed to transform normal vector`
     )
 })
+*/

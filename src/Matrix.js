@@ -303,6 +303,180 @@ class Matrix4 {
         }
     }
 
+    static Identity() {
+        return new Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)
+    }
+
+    static Zero() {
+        return new Matrix4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    }
+
+    static RotX(angle) {
+        const rotation = Matrix4.Zero()
+        const sin = Math.sin(angle)
+        const cos = Math.cos(angle)
+        
+        rotation.matrix[0]  = 1;
+        rotation.matrix[15] = 1;
+        rotation.matrix[5]  = cos;
+        rotation.matrix[10] = cos;
+        rotation.matrix[9]  = -sin;
+        rotation.matrix[6]  = sin;
+        
+        return rotation;
+    }
+
+    static RotY(angle) {
+        const rotation = Matrix4.Zero()
+        const sin = Math.sin(angle)
+        const cos = Math.cos(angle)
+
+        rotation.matrix[5]  = 1;
+        rotation.matrix[15] = 1;
+        rotation.matrix[0]  = cos;
+        rotation.matrix[2]  = -sin;
+        rotation.matrix[8]  = sin;
+        rotation.matrix[10] = cos;
+
+        return rotation;
+    }
+
+    static RotZ(angle) {
+        const rotation = Matrix4.Zero()
+        const sin = Math.sin(angle)
+        const cos = Math.cos(angle)
+
+        rotation.matrix[10] = 1;
+        rotation.matrix[15] = 1;
+        rotation.matrix[0]  = cos;
+        rotation.matrix[1]  = sin;
+        rotation.matrix[4]  = -sin;
+        rotation.matrix[5]  = cos;
+
+        return rotation;
+    }
+
+    static RotationAxis(axis, angle) {
+        const sin = Math.sin(-angle)
+        const cos = Math.cos(-angle)
+        const cos1 = 1 - cos
+        axis.normalize()
+
+        const rotation = Matrix4.Zero()
+        rotation.matrix[0]  = (axis.x * axis.x) * cos1 + cos
+        rotation.matrix[1]  = (axis.x * axis.y) * cos1 - (axis.z * sin)
+        rotation.matrix[2]  = (axis.x * axis.z) * cos1 + (axis.y * sin)
+        rotation.matrix[3]  = 0.0
+        rotation.matrix[4]  = (axis.y * axis.x) * cos1 + (axis.z * sin)
+        rotation.matrix[5]  = (axis.y * axis.y) * cos1 + cos
+        rotation.matrix[6]  = (axis.y * axis.z) * cos1 - (axis.x * sin)
+        rotation.matrix[7]  = 0.0
+        rotation.matrix[8]  = (axis.z * axis.x) * cos1 - (axis.y * sin)
+        rotation.matrix[9]  = (axis.z * axis.y) * cos1 + (axis.x * sin)
+        rotation.matrix[10] = (axis.z * axis.z) * cos1 + cos
+        rotation.matrix[11] = 0.0
+        rotation.matrix[15] = 1.0
+
+        return rotation
+    }
+
+    static RotationYawPitchRoll(yaw, pitch, roll) {
+        const rotYaw   = Matrix4.RotationY(yaw)
+        const rotPitch = Matrix4.RotationX(pitch)
+        const rotRoll  = Matrix4.RotationZ(roll)
+
+        return rotRoll.multiply(rotPitch.multiply(rotYaw))
+    }
+
+    static Scaler(x, y, z) {
+        const scaler = Matrix4.Zero()
+        scaler.matrix[0] = x
+        scaler.matrix[5] = y
+        scaler.matrix[10] = z
+        scaler.matrix[15] = 1
+
+        return scaler
+    }
+
+    static Translation(x, y, z) {
+        const translation = Matrix4.Identity()
+        translation.matrix[12] = x
+        translation.matrix[13] = y
+        translation.matrix[14] = z
+
+        return translation
+    }
+
+    static LookAtLH(eye, target, up) {
+        const zAxis = target.subtract(eye)
+        zAxis.normalize()
+
+        const xAxis = Vector3.Cross(up, zAxis)
+        xAxis.normalize()
+
+        const yAxis = Vector3.Cross(zAxis, xAxis)
+        yAxis.normalize()
+
+        const eyeX = -Vector3.Dot(xAxis, eye)
+        const eyeY = -Vector3.Dot(yAxis, eye)
+        const eyeZ = -Vector3.Dot(zAxis, eye)
+
+        return new Matrix4(xAxis.x, yAxis.x, zAxis.x, 0, xAxis.y, yAxis.y, zAxis.y, 0, xAxis.z, yAxis.z, zAxis.z, 0, eyeX, eyeY, eyeZ, 1)
+    }
+
+    static PerspectiveLH(width, height, zNear, zFar) {
+        const m = Matrix4.Zero()
+        m.matrix[0]  = (2 * zNear) /  width
+        m.matrix[1]  = m.matrix[2] = m.matrix[3] = 0.0
+        m.matrix[5]  = (2.0 * zNear) / height
+        m.matrix[4]  = m.matrix[6] = m.matrix[7] = 0.0
+        m.matrix[10] = -zFar / (zNear - zFar)
+        m.matrix[8]  = m.matrix[9] = 0.0
+        m.matrix[11] = 1.0
+        m.matrix[12] = m.matrix[13] = m.matrix[15] = 0.0
+        m.matrix[14] = (zNear * zFar) / (zNear - zFar)
+
+        return m
+    }
+
+    static PerspectiveForLH(fov, aspect, zNear, zFar) {
+        const m = Matrix4.Zero()
+        const tan = 1 / (Math.tan(fov * .5))
+        m.matrix[0]  = tan / aspect
+        m.matrix[1]  = m.matrix[2] = m.matrix[3] = 0.0
+        m.matrix[5]  = tan
+        m.matrix[4]  = m.matrix[6] = m.matrix[7] = 0.0
+        m.matrix[8]  = m.matrix[9] = 0.0
+        m.matrix[10] = -zFar / (zNear - zFar)
+        m.matrix[11] = 1.0
+        m.matrix[12] = m.matrix[13] = m.matrix[15] = 0.0
+        m.matrix[14] = (zNear * zFar) / (zNear - zFar)
+
+        return m
+    }
+
+    static Transpose(matrix) {
+        const m = new Matrix4()
+        m.matrix[0] = matrix.matrix[0]
+        m.matrix[1] = matrix.matrix[4]
+        m.matrix[2] = matrix.matrix[8]
+        m.matrix[3] = matrix.matrix[12]
+        m.matrix[4] = matrix.matrix[1]
+        m.matrix[5] = matrix.matrix[5]
+        m.matrix[6] = matrix.matrix[9]
+        m.matrix[7] = matrix.matrix[13]
+        m.matrix[8] = matrix.matrix[2]
+        m.matrix[9] = matrix.matrix[6]
+        m.matrix[10] = matrix.matrix[10]
+        m.matrix[11] = matrix.matrix[14]
+        m.matrix[12] = matrix.matrix[3]
+        m.matrix[13] = matrix.matrix[7]
+        m.matrix[14] = matrix.matrix[11]
+        m.matrix[15] = matrix.matrix[15]
+
+        return m
+    }
+
     equal(m4) {
         return this.data[0][0] === m4.data[0][0] && this.data[0][1] === m4.data[0][1] && this.data[0][2] === m4.data[0][2] && this.data[0][3] === m4.data[0][3] &&
                this.data[1][0] === m4.data[1][0] && this.data[1][1] === m4.data[1][1] && this.data[1][2] === m4.data[1][2] && this.data[1][3] === m4.data[1][3] &&

@@ -1,5 +1,80 @@
 import { Matrix3 } from "./Matrix"
 
+class Vector2 {
+    constructor(x, y) {
+        if (x instanceof Vector2 && y === undefined) {
+            this.x = x.x 
+            this.y = x.y 
+        } else {
+            this.x = x 
+            this.y = y
+        }
+    }
+
+    static Identity() {
+        return new Vector2(0, 0)
+    }
+
+    static Normalize(vector2) {
+        let vector = new Vector2(vector2)
+        vector.normalize()
+        return vector
+    }
+
+    static Min(v2A, v2B) {
+        return new Vector2(
+            v2A.x < v2B.x ? v2A.x : v2B.x,
+            v2A.y < v2B.y ? v2A.y : v2B.y
+        )
+    }
+
+    static Max(v2A, v2B) {
+        return new Vector2(
+            v2A.x > v2B.x ? v2A.x : v2B.x,
+            v2A.y > v2B.y ? v2A.y : v2B.y
+        )
+    }
+
+    static Transform(vector2, transformation) {
+        return new Vector2(
+            (vector2.x * transformation.matrix[0]) + (vector2.y * transformation.matrix[4]),
+            (vector2.x * transformation.matrix[1]) + (vector2.y * transformation.matrix[5]),
+        )
+    }
+
+    add(vector2) {
+        return new Vector2(this.x + vector2.x, this.y + vector2.y)
+    }
+
+    subtract(vector2) {
+        return new Vector2(this.x - vector2.x, this.y - vector2.y)
+    }
+
+    get not() {
+        return new Vector2(-this.x, -this.y)
+    }
+
+    scale(scaler) {
+        return new Vector2(this.x * scaler, this.y * scaler)
+    }
+
+    equals(vector2) {
+        return this.x === vector2.x && this.y === vector2.y
+    }
+
+    get size() {
+        return Math.sqrt( (this.x * this.x) + (this.y * this.y) )
+    }
+
+    normalize() {
+        if (this.size === 0) { return }
+
+        const scaler = 1 / this.size
+        this.x *= scaler
+        this.y *= scaler
+    }
+}
+
 class Vector3 {
     constructor(x, y, z) {
         if (x instanceof Vector3 && y === undefined && z === undefined) {
@@ -11,6 +86,44 @@ class Vector3 {
             this.y = y
             this.z = z
         }
+    }
+
+    static Zero() {
+        return new Vector3(0, 0, 0)
+    }
+
+    static Up() {
+        return new Vector3(0, 1, 0)
+    }
+
+    static Distance(v1, v2) {
+        const dist = Vector3.DistanceSquared(v1, v2)
+        return Math.sqrt(dist)
+    }
+
+    static DistanceSquared(v1, v2) {
+        const x = v1.x - v2.x
+        const y = v1.y - v2.y
+        const z = v1.z - v2.z
+
+        return (x * x) + (y * y) + (z * z)
+    }
+
+    static TransformCoordinates(vector3, matrix) {
+        const x = (vector3.x * matrix[0]) + (vector3.y * matrix[4]) + (vector3.z * matrix[8]) + matrix[12];
+        const y = (vector3.x * matrix[1]) + (vector3.y * matrix[5]) + (vector3.z * matrix[9]) + matrix[13];
+        const z = (vector3.x * matrix[2]) + (vector3.y * matrix[6]) + (vector3.z * matrix[10]) + matrix[14];
+        const w = (vector3.x * matrix[3]) + (vector3.y * matrix[7]) + (vector3.z * matrix[11]) + matrix[15];
+        
+        return new Vector3(x / w, y / w, z / w);
+    }
+
+    static TransformNormal(vector3, matrix) {
+        const x = (vector3.x * matrix[0]) + (vector3.y * matrix[4]) + (vector3.z * matrix[8]);
+        const y = (vector3.x * matrix[1]) + (vector3.y * matrix[5]) + (vector3.z * matrix[9]);
+        const z = (vector3.x * matrix[2]) + (vector3.y * matrix[6]) + (vector3.z * matrix[10]);
+        
+        return new Vector3(x, y, z);
     }
 
     static Dot(v3a, v3b) {
@@ -56,6 +169,10 @@ class Vector3 {
         return v3a.x === v3b.x && v3a.y === v3b.y && v3a.z === v3b.z
     }
 
+    equals(v3) {
+        return this.equal(v3)
+    }
+
     equal(v3) {
         return this.x === v3.x && this.y === v3.y && this.z === v3.z
     }
@@ -64,16 +181,20 @@ class Vector3 {
         return new Vector3(this.x * scaler, this.y * scaler, this.z * scaler)
     }
 
+    get not() {
+        return this.negate()
+    }
+
     negate() {
         return new Vector3(-this.x, -this.y, -this.z)
     }
 
-    size() {
+    get size() {
         return Math.sqrt(this.x*this.x + this.y*this.y + this.z*this.z)
     }
 
     normalize() {
-        return this.scale(1 / this.size())
+        return this.scale(1 / this.size)
     }
 
     subtract(v3) {
@@ -121,7 +242,7 @@ class Vector4 {
     }
 
     normalize() {
-        return this.scale(1 / this.size())
+        return this.scale(1 / this.size)
     }
 }
 
@@ -154,6 +275,7 @@ class Point3 extends Vector3 {
 }
 
 export {
+    Vector2,
     Vector3,
     Vector4,
     Point3
