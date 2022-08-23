@@ -381,9 +381,9 @@ class Matrix4 {
     }
 
     static RotationYawPitchRoll(yaw, pitch, roll) {
-        const rotYaw   = Matrix4.RotationY(yaw)
-        const rotPitch = Matrix4.RotationX(pitch)
-        const rotRoll  = Matrix4.RotationZ(roll)
+        const rotYaw   = Matrix4.RotY(yaw)
+        const rotPitch = Matrix4.RotX(pitch)
+        const rotRoll  = Matrix4.RotZ(roll)
 
         return rotRoll.multiply(rotPitch.multiply(rotYaw))
     }
