@@ -322,8 +322,6 @@ class Matrix4 {
         rotation.data[2][2] = cos;
         rotation.data[2][1]  = -sin;
         rotation.data[1][2]  = sin;
-
-        console.log('rotx', rotation)
         
         return rotation;
     }
