@@ -88,8 +88,16 @@ class Vector3 {
         }
     }
 
+    static get Zero() {
+        return new Vector3(0, 0, 0)
+    }
+
     static Zero() {
         return new Vector3(0, 0, 0)
+    }
+
+    static get Up() {
+        return new Vector3(0, 1, 0)
     }
 
     static Up() {
