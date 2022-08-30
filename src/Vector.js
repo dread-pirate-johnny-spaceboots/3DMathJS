@@ -110,18 +110,18 @@ class Vector3 {
     }
 
     static TransformCoordinates(vector3, matrix) {
-        const x = (vector3.x * matrix[0]) + (vector3.y * matrix[4]) + (vector3.z * matrix[8]) + matrix[12];
-        const y = (vector3.x * matrix[1]) + (vector3.y * matrix[5]) + (vector3.z * matrix[9]) + matrix[13];
-        const z = (vector3.x * matrix[2]) + (vector3.y * matrix[6]) + (vector3.z * matrix[10]) + matrix[14];
-        const w = (vector3.x * matrix[3]) + (vector3.y * matrix[7]) + (vector3.z * matrix[11]) + matrix[15];
+        const x = (vector3.x * matrix.data[0][0]) + (vector3.y * matrix.data[1][0]) + (vector3.z * matrix.data[2][0]) + matrix.data[3][0];
+        const y = (vector3.x * matrix.data[0][1]) + (vector3.y * matrix.data[1][1]) + (vector3.z * matrix.data[2][1]) + matrix.data[3][1];
+        const z = (vector3.x * matrix.data[0][2]) + (vector3.y * matrix.data[1][2]) + (vector3.z * matrix.data[2][2]) + matrix.data[3][2];
+        const w = (vector3.x * matrix.data[0][3]) + (vector3.y * matrix.data[1][3]) + (vector3.z * matrix.data[2][3]) + matrix.data[3][3];
         
         return new Vector3(x / w, y / w, z / w);
     }
 
     static TransformNormal(vector3, matrix) {
-        const x = (vector3.x * matrix[0]) + (vector3.y * matrix[4]) + (vector3.z * matrix[8]);
-        const y = (vector3.x * matrix[1]) + (vector3.y * matrix[5]) + (vector3.z * matrix[9]);
-        const z = (vector3.x * matrix[2]) + (vector3.y * matrix[6]) + (vector3.z * matrix[10]);
+        const x = (vector3.x * matrix.data[0][0]) + (vector3.y * matrix.data[1][0]) + (vector3.z * matrix.data[2][0]);
+        const y = (vector3.x * matrix.data[0][1]) + (vector3.y * matrix.data[1][1]) + (vector3.z * matrix.data[2][1]);
+        const z = (vector3.x * matrix.data[0][2]) + (vector3.y * matrix.data[1][2]) + (vector3.z * matrix.data[2][2]);
         
         return new Vector3(x, y, z);
     }
